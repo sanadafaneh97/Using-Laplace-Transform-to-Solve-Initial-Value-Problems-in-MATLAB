@@ -1,0 +1,37 @@
+% Let's say we want to solve then plot the following IVP:-
+
+% y''' + 2y'' + y' + 2y = -cos(t) + 100*dirac(t - 50*pi)
+
+% Given the following initial conditions:-
+
+% y(0) = 0, y'(0) = 0, y''(0) = 0
+
+% Note that the solution will be plotted for t in [0, 300]
+
+
+
+% Solution:-
+
+syms y(t) t Y;      % Use the symbolic method here
+
+ODE = diff(y(t), t, 3) + 2*diff(y(t), t, 2) + diff(y(t), t, 1) + 2*y(t) + cos(t) - 100*dirac(t - 50*pi);
+% The above line is the ODE in line 3
+% Note: diff(y(t), t, n) means the nth derivative of y(t) with respect to t
+
+L_ODE = laplace(ODE);    % To calculate the laplace transform of the given ODE (but we don't want to display it)
+
+% To substitute the initial conditions:-
+
+L_ODE = subs(L_ODE, 'y(0)', 0);
+L_ODE = subs(L_ODE, 'D(y) (0)', 0);         % D(y) is for first derivative of y
+L_ODE = subs(L_ODE, 'D(D(y)) (0)', 0);      % D(D(y)) is for second derivative of y
+
+% To substitute the symbolic variables:-
+
+L_ODE = subs(L_ODE, 'laplace(y(t), t, s)', Y);
+
+Y = solve(L_ODE, Y);
+
+y = ilaplace(Y);       % To calculate y(t) via the Inverse Laplace Transform
+
+ezplot(y, [0, 300]);   % To plot solution 
